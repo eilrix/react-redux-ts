@@ -1,6 +1,6 @@
 {
   "name": "react-redux-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "react-redux": "^7.1.3",

@@ -46,8 +46,10 @@ declare type DispatchActionAsync<StateType> = {
  * @template StateExt State extension that is mixed into the state type.
  * @param customReducer Root reducer pure function
  * @param defaultStore Initial value for the store
+ * @param shouldComposeWithDevTools Whether or not apply Redux DevTools. Will apply by default if not set "false"
+ * @param middlewares array of applied redux middlewares
  */
-export declare function createStore<StateType extends Object, CustomActions extends Action = Action<never>, Ext = {}, StateExt = {}>(customReducer?: (state: StateType, action: CustomActions) => StateType, defaultStore?: StateType, middlewares?: (Middleware<any, StateType, any>)[]): redux.Store<StateType & StateExt, CustomActions | { [K in keyof StateType]: {
+export declare function createStore<StateType extends Object, CustomActions extends Action = Action<never>, Ext = {}, StateExt = {}>(customReducer?: (state: StateType, action: CustomActions) => StateType, defaultStore?: StateType, shouldComposeWithDevTools?: boolean, middlewares?: (Middleware<any, StateType, any>)[]): redux.Store<StateType & StateExt, CustomActions | { [K in keyof StateType]: {
     type: "SET_PROP";
     prop: K;
     payload: StateType[K];

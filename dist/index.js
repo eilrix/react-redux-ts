@@ -64,8 +64,10 @@ function makeAsyncSetPropMiddleware() {
  * @template StateExt State extension that is mixed into the state type.
  * @param customReducer Root reducer pure function
  * @param defaultStore Initial value for the store
+ * @param shouldComposeWithDevTools Whether or not apply Redux DevTools. Will apply by default if not set "false"
+ * @param middlewares array of applied redux middlewares
  */
-function createStore(customReducer, defaultStore, middlewares) {
+function createStore(customReducer, defaultStore, shouldComposeWithDevTools, middlewares) {
     // ACTIONS 
     // REDUCERS 
     function setterReducer(state, action) {
@@ -104,7 +106,7 @@ function createStore(customReducer, defaultStore, middlewares) {
         appliedMiddlewares = redux_1.applyMiddleware(...middlewares, makeAsyncSetPropMiddleware());
     else
         appliedMiddlewares = redux_1.applyMiddleware(makeAsyncSetPropMiddleware());
-    return redux.createStore(rootReducer, redux_devtools_extension_1.composeWithDevTools(appliedMiddlewares));
+    return redux.createStore(rootReducer, shouldComposeWithDevTools !== false ? redux_devtools_extension_1.composeWithDevTools(appliedMiddlewares) : appliedMiddlewares);
 }
 exports.createStore = createStore;
 // REACT-REDUX CONNECT

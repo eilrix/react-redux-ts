@@ -17,7 +17,6 @@ type SetActionAsync<StateType> = { [K in keyof StateType]: {
     func: () => Promise<StateType[K]>;
 } }[keyof StateType];
 
-
 type AsyncStatus = 'start' | 'error' | 'success' | 'end';
 
 type NotifySetActionAsync<StateType> = { [K in keyof StateType]: {
@@ -28,8 +27,6 @@ type NotifySetActionAsync<StateType> = { [K in keyof StateType]: {
 } }[keyof StateType];
 
 export type SetActionType<S> = SetActionSync<S> | SetActionAsync<S> | NotifySetActionAsync<S>;
-
-
 
 type DispatchActionSync<StateType> = { [K in keyof StateType]: {
     prop: K;
@@ -108,12 +105,15 @@ function makeAsyncSetPropMiddleware<StateType>(): Middleware<{}, StateType, redu
  * @template StateExt State extension that is mixed into the state type.
  * @param customReducer Root reducer pure function
  * @param defaultStore Initial value for the store
+ * @param shouldComposeWithDevTools Whether or not apply Redux DevTools. Will apply by default if not set "false"
+ * @param middlewares array of applied redux middlewares
  */
 export function createStore<StateType extends Object,
     CustomActions extends Action = Action<never>,
     Ext = {}, StateExt = {}>(
         customReducer?: (state: StateType, action: CustomActions) => StateType,
         defaultStore?: StateType,
+        shouldComposeWithDevTools?: boolean,
         middlewares?: (Middleware<any, StateType, any>)[],
 ) {
 
@@ -153,16 +153,14 @@ export function createStore<StateType extends Object,
         return state;
     };
 
-
     // STORE
-
-
 
     let appliedMiddlewares;
     if (middlewares) appliedMiddlewares = applyMiddleware(...middlewares, makeAsyncSetPropMiddleware<StateType>());
     else appliedMiddlewares = applyMiddleware(makeAsyncSetPropMiddleware<StateType>());
 
-    return redux.createStore<StateType, StoreAction, Ext, StateExt>(rootReducer, composeWithDevTools<Ext, StateExt>(appliedMiddlewares));
+    return redux.createStore<StateType, StoreAction, Ext, StateExt>(rootReducer,
+        shouldComposeWithDevTools !== false ? composeWithDevTools<Ext, StateExt>(appliedMiddlewares) : appliedMiddlewares);
 }
 
 
@@ -182,11 +180,6 @@ export function connect<State, TStateProps = {}, TDispatchProps = {}, TOwnProps 
     mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>,
     mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>
 ) {
-
-    type ActionType = SetActionType<State>;
-
-
-
     const rootMapDispatchToProps = (dispatch, ownProps) => {
         let mdtp = {};
         if (typeof mapDispatchToProps === 'function') {

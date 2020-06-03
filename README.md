@@ -1,5 +1,5 @@
 # react-redux-ts
-Replaces redux and react-redux npm modules
+Simplifies workflow with redux and react-redux
 
 ## 1. Simple set
 Adds a common action to set any value in the store with typechecks.
@@ -19,7 +19,7 @@ store.dispatch({
     func: myAsyncFunction
 });
 ```
-Will insure that 'payload' in SET_PROP and return value of 'func' in SET_PROP_ASYNC has same type as property in the store.
+Will ensure that 'payload' in SET_PROP and return value of 'func' in SET_PROP_ASYNC has the same type as property in the store.
 
 Async version will also dispatch notifications in order:
 - start

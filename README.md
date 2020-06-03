@@ -66,7 +66,7 @@ export function CustomReducer(state: StateType, action: CustomActionTypes<StateT
 
 ##### Store.ts:
 ```typescript
-import createStore from 'react-redux-ts';
+import { createStore } from 'react-redux-ts';
 import { CustomActionTypes } from './actions/Actions';
 import { CustomReducer } from './reducers/CustomReducer';
 class State { 

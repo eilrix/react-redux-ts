@@ -98,9 +98,7 @@ const mapDispatchToProps = (dispatch: DispatchType, ownProps) => {
 type MyComponentPropsType = PropsType<StateType, {}, ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
 
 const MyComponent = (props: MyComponentPropsType) => {
-    return <div 
-            onClick={ () => { props.handleNext(); } }
-        >{props.myProp}</div>
+    return <div onClick={ () => { props.handleNext(); } } >{props.myProp}</div>
 }
 
 export const ConnectedMyComponent = connect(mapStateToProps, mapDispatchToProps)(MyComponent);

@@ -109,7 +109,7 @@ function makeAsyncSetPropMiddleware<StateType>(): Middleware<{}, StateType, redu
  * @param customReducer Root reducer pure function
  * @param defaultStore Initial value for the store
  */
-export default function createStore<StateType extends Object,
+export function createStore<StateType extends Object,
     CustomActions extends Action = Action<never>,
     Ext = {}, StateExt = {}>(
         customReducer?: (state: StateType, action: CustomActions) => StateType,

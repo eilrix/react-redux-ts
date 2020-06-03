@@ -37,23 +37,21 @@ type NextPageAction = {
   type: 'NextPage';
 };
 
-type ValidateAction<State> = {
+type ValidateFieldAction<State> = {
   type: 'ValidateField';
   payload: (keyof State)[];
 };
 
-export type CustomActionTypes<State> = NextPageAction | ValidateAction<State>;
+export type CustomActionTypes<State> = NextPageAction | ValidateFieldAction<State>;
 ```
 
 
-##### Reducers.ts:
+##### CustomReducer.ts:
 ```typescript
 import { CustomActionTypes } from '../actions/Actions';
-import { StoreState } from '../Store'
-import { templateReducer } from './TemplateReducer'
+import { StateType } from '../Store';
 
-
-export function SomeCustomReducer(state: StoreState, action: CustomActionTypes<StoreState>): StoreState {
+export function CustomReducer(state: StateType, action: CustomActionTypes<StateType>): StateType {
   switch (action.type) {
     case 'ValidateField':
       console.log('ValidateField');
@@ -70,14 +68,15 @@ export function SomeCustomReducer(state: StoreState, action: CustomActionTypes<S
 ```typescript
 import createStore from 'react-redux-ts';
 import { CustomActionTypes } from './actions/Actions';
-import { SomeCustomReducer } from './reducers/rootReducer';
-export class State { 
+import { CustomReducer } from './reducers/CustomReducer';
+class State { 
     myProp: string = '';
 }
-export const store = createStore<State, CustomActionTypes<State>>(
-    SomeCustomReducer, new State());
+export type StateType = typeof State;
 
-export type StateType = typeof State
+export const store = createStore<StateType, CustomActionTypes<StateType>>(
+    CustomReducer, new State());
+
 export type DispatchType = typeof store.dispatch;
 export type StoreAction = ReturnType<typeof store.dispatch>;
 ```
@@ -99,7 +98,9 @@ const mapDispatchToProps = (dispatch: DispatchType, ownProps) => {
 type MyComponentPropsType = PropsType<StateType, {}, ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
 
 const MyComponent = (props: MyComponentPropsType) => {
-	return <div></div>
+    return <div 
+            onClick={ () => { props.handleNext(); } }
+        >{props.myProp}</div>
 }
 
 export const ConnectedMyComponent = connect(mapStateToProps, mapDispatchToProps)(MyComponent);

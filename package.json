@@ -1,6 +1,6 @@
 {
   "name": "react-redux-ts",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "author": "elrix",
   "license": "MIT",
   "main": "dist/index.js",

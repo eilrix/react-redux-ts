@@ -74,7 +74,7 @@ class State {
 }
 export type StateType = typeof State;
 
-export const store = createStore<StateType, CustomActionTypes<StateType>>(
+const store = createStore<StateType, CustomActionTypes<StateType>>(
     CustomReducer, new State());
 
 export type DispatchType = typeof store.dispatch;

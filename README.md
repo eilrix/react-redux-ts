@@ -1,6 +1,8 @@
 # react-redux-ts
 Simplifies workflow with redux and react-redux
 
+npm i react-redux-ts
+
 ## 1. Simple set
 Adds a common action to set any value in the store with typechecks.
 Without async:

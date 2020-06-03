@@ -1,6 +1,6 @@
 {
   "name": "react-redux-ts",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Redux, react-redux workflow simplifier",
   "author": "elrix",
   "license": "MIT",

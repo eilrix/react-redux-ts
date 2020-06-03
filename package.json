@@ -1,8 +1,14 @@
 {
   "name": "react-redux-ts",
   "version": "1.0.10",
+  "description": "Redux, react-redux workflow simplifier",
   "author": "elrix",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eilrix/react-redux-ts"
+  },
+  "homepage": "https://github.com/eilrix/react-redux-ts#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {

@@ -22,10 +22,9 @@ store.dispatch({
 Will insure that 'payload' in SET_PROP and return value of 'func' in SET_PROP_ASYNC has same type as property in the store.
 
 Async version will also dispatch notifications in order:
-start
-success / error
-end
-
+- start
+- success / error
+- end
 
 ## 2. Simple and safe type actions
 Allows to use type definitions as actions instead of objects.

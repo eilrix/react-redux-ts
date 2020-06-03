@@ -37,6 +37,7 @@ declare type DispatchActionAsync<StateType> = {
         func: () => Promise<StateType[K]>;
     };
 }[keyof StateType];
+declare type StoreAction<StateType, CustomActions> = SetActionType<StateType> | CustomActions;
 /**
  * Creates a Redux store.
  *
@@ -49,20 +50,7 @@ declare type DispatchActionAsync<StateType> = {
  * @param shouldComposeWithDevTools Whether or not apply Redux DevTools. Will apply by default if not set "false"
  * @param middlewares array of applied redux middlewares
  */
-export declare function createStore<StateType extends Object, CustomActions extends Action = Action<never>, Ext = {}, StateExt = {}>(customReducer?: (state: StateType, action: CustomActions) => StateType, defaultStore?: StateType, shouldComposeWithDevTools?: boolean, middlewares?: (Middleware<any, StateType, any>)[]): redux.Store<StateType & StateExt, CustomActions | { [K in keyof StateType]: {
-    type: "SET_PROP";
-    prop: K;
-    payload: StateType[K];
-}; }[keyof StateType] | { [K_1 in keyof StateType]: {
-    type: "SET_PROP_ASYNC";
-    prop: K_1;
-    func: () => Promise<StateType[K_1]>;
-}; }[keyof StateType] | { [K_2 in keyof StateType]: {
-    type: "NOTIFY_SET_PROP_ASYNC";
-    prop: K_2;
-    status: AsyncStatus;
-    response?: StateType[K_2];
-}; }[keyof StateType]> & Ext;
+export declare function createStore<StateType, CustomActions extends Action = Action<never>, Ext = Record<string, unknown>, StateExt = Record<string, unknown>>(customReducer?: (state: StateType, action: CustomActions) => StateType, defaultStore?: StateType, shouldComposeWithDevTools?: boolean, middlewares?: (Middleware<Record<string, unknown>, StateType>)[]): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext;
 /**
  * Returns a function used for connection react component to the store
  *
@@ -73,11 +61,8 @@ export declare function createStore<StateType extends Object, CustomActions exte
  * @param mapStateToProps
  * @param mapDispatchToProps
  */
-export declare function connect<State, TStateProps = {}, TDispatchProps = {}, TOwnProps = {}>(mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>, mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>): reactRedux.InferableComponentEnhancerWithProps<TStateProps & {
-    setStateProp: (action: DispatchActionSync<State>) => any;
-    setStatePropAsync: (action: DispatchActionAsync<State>) => any;
-}, any>;
-export declare type PropsType<State = {}, TOwnProps = {}, TStateProps = {}, TDispatchProps = {}> = TStateProps & TDispatchProps & TOwnProps & {
+export declare function connect<State, TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>, TOwnProps = Record<string, unknown>>(mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>, mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>): reactRedux.InferableComponentEnhancerWithProps<TStateProps & TDispatchProps, TOwnProps>;
+export declare type PropsType<State = Record<string, unknown>, TOwnProps = Record<string, unknown>, TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>> = TStateProps & TDispatchProps & TOwnProps & {
     setStateProp: (action: DispatchActionSync<State>) => typeof action;
     setStatePropAsync: (action: DispatchActionAsync<State>) => typeof action;
 };

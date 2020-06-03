@@ -47,7 +47,7 @@ type DispatchActionAsync<StateType> = { [K in keyof StateType]: {
  *
  * @template StateType The type of state held by the store.
  */
-function makeAsyncSetPropMiddleware<StateType>(): Middleware<{}, StateType, redux.Dispatch> {
+function makeAsyncSetPropMiddleware<StateType>(): Middleware<Record<string, unknown>, StateType, redux.Dispatch> {
     type ActionType = SetActionType<StateType>;
     return (
         ({ dispatch }: { dispatch: redux.Dispatch<ActionType> }) => (next: redux.Dispatch<ActionType>) => (action: ActionType) => {
@@ -96,6 +96,8 @@ function makeAsyncSetPropMiddleware<StateType>(): Middleware<{}, StateType, redu
 
 // CREATE STORE //
 
+type StoreAction<StateType, CustomActions> = SetActionType<StateType> | CustomActions;
+
 /**
  * Creates a Redux store.
  *
@@ -108,18 +110,18 @@ function makeAsyncSetPropMiddleware<StateType>(): Middleware<{}, StateType, redu
  * @param shouldComposeWithDevTools Whether or not apply Redux DevTools. Will apply by default if not set "false"
  * @param middlewares array of applied redux middlewares
  */
-export function createStore<StateType extends Object,
+export function createStore<StateType,
     CustomActions extends Action = Action<never>,
-    Ext = {}, StateExt = {}>(
+    Ext = Record<string, unknown>, StateExt = Record<string, unknown>>(
         customReducer?: (state: StateType, action: CustomActions) => StateType,
         defaultStore?: StateType,
         shouldComposeWithDevTools?: boolean,
-        middlewares?: (Middleware<any, StateType, any>)[],
-) {
+        middlewares?: (Middleware<Record<string, unknown>, StateType>)[],
+): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext {
 
     // ACTIONS 
 
-    type StoreAction = SetActionType<StateType> | CustomActions;
+    type CustomStoreAction = StoreAction<StateType, CustomActions>;
 
     // REDUCERS 
 
@@ -130,9 +132,9 @@ export function createStore<StateType extends Object,
             });
         }
         else return state;
-    };
+    }
 
-    function rootReducer(state: StateType | undefined, action: StoreAction): StateType {
+    function rootReducer(state: StateType | undefined, action: CustomStoreAction): StateType {
         if (state === undefined) {
             if (defaultStore) state = defaultStore;
             else return {} as StateType;
@@ -151,7 +153,7 @@ export function createStore<StateType extends Object,
         }
 
         return state;
-    };
+    }
 
     // STORE
 
@@ -159,7 +161,7 @@ export function createStore<StateType extends Object,
     if (middlewares) appliedMiddlewares = applyMiddleware(...middlewares, makeAsyncSetPropMiddleware<StateType>());
     else appliedMiddlewares = applyMiddleware(makeAsyncSetPropMiddleware<StateType>());
 
-    return redux.createStore<StateType, StoreAction, Ext, StateExt>(rootReducer,
+    return redux.createStore<StateType, CustomStoreAction, Ext, StateExt>(rootReducer,
         shouldComposeWithDevTools !== false ? composeWithDevTools<Ext, StateExt>(appliedMiddlewares) : appliedMiddlewares);
 }
 
@@ -176,10 +178,11 @@ export function createStore<StateType extends Object,
  * @param mapStateToProps
  * @param mapDispatchToProps 
  */
-export function connect<State, TStateProps = {}, TDispatchProps = {}, TOwnProps = {}>(
-    mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>,
-    mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>
-) {
+export function connect<State, TStateProps = Record<string, unknown>,
+    TDispatchProps = Record<string, unknown>, TOwnProps = Record<string, unknown>>(
+        mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>,
+        mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>
+    ): reactRedux.InferableComponentEnhancerWithProps<TStateProps & TDispatchProps, TOwnProps> {
     const rootMapDispatchToProps = (dispatch, ownProps) => {
         let mdtp = {};
         if (typeof mapDispatchToProps === 'function') {
@@ -210,7 +213,8 @@ export function connect<State, TStateProps = {}, TDispatchProps = {}, TOwnProps 
     return reactRedux.connect(mapStateToProps, rootMapDispatchToProps);
 }
 
-export type PropsType<State = {}, TOwnProps = {}, TStateProps = {}, TDispatchProps = {}> =
+export type PropsType<State = Record<string, unknown>, TOwnProps = Record<string, unknown>,
+    TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>> =
     TStateProps & TDispatchProps & TOwnProps & {
         setStateProp: (action: DispatchActionSync<State>) => typeof action;
         setStatePropAsync: (action: DispatchActionAsync<State>) => typeof action;

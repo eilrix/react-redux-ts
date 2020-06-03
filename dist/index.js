@@ -54,7 +54,6 @@ function makeAsyncSetPropMiddleware() {
         }
     });
 }
-// CREATE STORE //
 /**
  * Creates a Redux store.
  *
@@ -79,7 +78,6 @@ function createStore(customReducer, defaultStore, shouldComposeWithDevTools, mid
         else
             return state;
     }
-    ;
     function rootReducer(state, action) {
         if (state === undefined) {
             if (defaultStore)
@@ -99,7 +97,6 @@ function createStore(customReducer, defaultStore, shouldComposeWithDevTools, mid
         }
         return state;
     }
-    ;
     // STORE
     let appliedMiddlewares;
     if (middlewares)

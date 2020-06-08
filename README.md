@@ -93,12 +93,24 @@ const mapStateToProps = (state: StateType, ownProps) => {
 const mapDispatchToProps = (dispatch: DispatchType, ownProps) => {
     return {
         handleNext: () => dispatch({ type: 'NextPage' }),
+        dispatch
     }
 }
 type MyComponentPropsType = PropsType<StateType, {}, ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
 
 const MyComponent = (props: MyComponentPropsType) => {
-    return <div onClick={ () => { props.handleNext(); } } >{props.myProp}</div>
+    return (
+        <div
+            onClick={() => {
+                this.props.dispatch({
+                    type: 'SET_PROP',
+                    prop: 'myProp',
+                    payload: 'val'
+                });
+                props.handleNext();
+            }}
+        >{props.myProp}</div>
+    )
 }
 
 export const ConnectedMyComponent = connect(mapStateToProps, mapDispatchToProps)(MyComponent);

@@ -178,8 +178,8 @@ export function createStore<StateType,
  * @param mapStateToProps
  * @param mapDispatchToProps 
  */
-export function connect<State, TStateProps = Record<string, unknown>,
-    TDispatchProps = Record<string, unknown>, TOwnProps = Record<string, unknown>>(
+export function connect<State, TStateProps = Record<string, any>,
+    TDispatchProps = Record<string, any>, TOwnProps = Record<string, any>>(
         mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>,
         mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>
     ): reactRedux.InferableComponentEnhancerWithProps<TStateProps & TDispatchProps, TOwnProps> {

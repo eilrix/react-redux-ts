@@ -61,7 +61,7 @@ export declare function createStore<StateType, CustomActions extends Action = Ac
  * @param mapStateToProps
  * @param mapDispatchToProps
  */
-export declare function connect<State, TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>, TOwnProps = Record<string, unknown>>(mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>, mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>): reactRedux.InferableComponentEnhancerWithProps<TStateProps & TDispatchProps, TOwnProps>;
+export declare function connect<State, TStateProps = Record<string, any>, TDispatchProps = Record<string, any>, TOwnProps = Record<string, any>>(mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>, mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>): reactRedux.InferableComponentEnhancerWithProps<TStateProps & TDispatchProps, TOwnProps>;
 export declare type PropsType<State = Record<string, unknown>, TOwnProps = Record<string, unknown>, TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>> = TStateProps & TDispatchProps & TOwnProps & {
     setStateProp: (action: DispatchActionSync<State>) => typeof action;
     setStatePropAsync: (action: DispatchActionAsync<State>) => typeof action;

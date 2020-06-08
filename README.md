@@ -76,6 +76,8 @@ class State {
 }
 export type StateType = typeof State;
 
+// All arguments of createStore are optional. It accepts your root reducer, initial state, 
+// boolean for whether or not use devtools, array of your middlewares.
 const store = createStore<StateType, CustomActionTypes<StateType>>(
     CustomReducer, new State());
 
@@ -104,7 +106,7 @@ const MyComponent = (props: MyComponentPropsType) => {
     return (
         <div
             onClick={() => {
-                this.props.dispatch({
+                props.dispatch({
                     type: 'SET_PROP',
                     prop: 'myProp',
                     payload: 'val'

@@ -126,14 +126,14 @@ function connect(mapStateToProps, mapDispatchToProps) {
         else if (mapDispatchToProps && mapDispatchToProps instanceof Object) {
             mdtp = Object.assign({}, Object.assign({}, mapDispatchToProps));
         }
-        return Object.assign(Object.assign({}, mdtp), { setStateProp: (action) => dispatch({
+        return Object.assign(Object.assign({}, mdtp), { setStateProp: (prop, payload) => dispatch({
                 type: 'SET_PROP',
-                prop: action.prop,
-                payload: action.payload
-            }), setStatePropAsync: (action) => dispatch({
+                prop: prop,
+                payload: payload
+            }), setStatePropAsync: (prop, func) => dispatch({
                 type: 'SET_PROP_ASYNC',
-                prop: action.prop,
-                func: action.func
+                prop: prop,
+                func: func
             }) });
     };
     return reactRedux.connect(mapStateToProps, rootMapDispatchToProps);

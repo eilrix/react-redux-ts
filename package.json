@@ -9,8 +9,8 @@
     "url": "https://github.com/eilrix/react-redux-ts"
   },
   "homepage": "https://github.com/eilrix/react-redux-ts#readme",
-  "main": "lib/redux.js",
-  "module": "es/redux.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "types": "dist/index.d.ts",
   "unpkg": "dist/index.js",
   "npmFileMap": [

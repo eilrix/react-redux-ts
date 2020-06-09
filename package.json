@@ -62,8 +62,8 @@
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "build": "tsc && npx terser --output ./dist/index.min.js --compress --mangle -- ./dist/index.js",
-    "build2": "rollup -c"
+    "rollupBuild": "rollup -c",
+    "tscBuild": "tsc && npx terser --output ./dist/index.min.js --compress --mangle -- ./dist/index.js"
   },
   "keywords": [
     "redux",

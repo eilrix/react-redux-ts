@@ -5,7 +5,10 @@
 /coverage
 
 # production
-/build
+build
+dist
+es
+lib
 
 # misc
 .DS_Store

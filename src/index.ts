@@ -198,13 +198,13 @@ export function connect<State, TStateProps = Record<string, any>,
         return {
             ...mdtp,
             setStateProp: (prop: (DispatchActionSync<State>['prop']),
-                payload: (DispatchActionSync<State>['payload'])) => dispatch({
+                payload: (DispatchActionSync<State>['payload'])): DispatchActionSync<State> => dispatch({
                     type: 'SET_PROP',
                     prop: prop,
                     payload: payload
                 }),
             setStatePropAsync: (prop: (DispatchActionAsync<State>['prop']),
-                func: (DispatchActionAsync<State>['func'])) => dispatch({
+                func: (DispatchActionAsync<State>['func'])): DispatchActionAsync<State> => dispatch({
                     type: 'SET_PROP_ASYNC',
                     prop: prop,
                     func: func
@@ -218,6 +218,8 @@ export function connect<State, TStateProps = Record<string, any>,
 export type PropsType<State = Record<string, unknown>, TOwnProps = Record<string, unknown>,
     TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>> =
     TStateProps & TDispatchProps & TOwnProps & {
-        setStateProp: (action: DispatchActionSync<State>) => typeof action;
-        setStatePropAsync: (action: DispatchActionAsync<State>) => typeof action;
+        setStateProp: (prop: (DispatchActionSync<State>['prop']),
+            payload: (DispatchActionSync<State>['payload'])) => DispatchActionSync<State>;
+        setStatePropAsync: (prop: (DispatchActionAsync<State>['prop']),
+            func: (DispatchActionAsync<State>['func'])) => DispatchActionAsync<State>;
     };

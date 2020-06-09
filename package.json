@@ -2,17 +2,19 @@
   "name": "react-redux-ts",
   "version": "1.2.5",
   "description": "Redux, react-redux workflow simplifier",
-  "author": "elrix",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/eilrix/react-redux-ts"
   },
   "homepage": "https://github.com/eilrix/react-redux-ts#readme",
+  "bugs": "https://github.com/eilrix/react-redux-ts/issues",
+  "author": "elrix",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "dist/index.d.ts",
   "unpkg": "dist/index.js",
+  "npmName": "react-redux-ts",
   "npmFileMap": [
     {
       "basePath": "/dist/",

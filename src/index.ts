@@ -197,18 +197,16 @@ export function connect<State, TStateProps = Record<string, any>,
 
         return {
             ...mdtp,
-            setStateProp: (prop: (DispatchActionSync<State>['prop']),
-                payload: (DispatchActionSync<State>['payload'])) => dispatch({
-                    type: 'SET_PROP',
-                    prop: prop,
-                    payload: payload
-                }),
-            setStatePropAsync: (prop: (DispatchActionAsync<State>['prop']),
-                func: (DispatchActionAsync<State>['func'])) => dispatch({
-                    type: 'SET_PROP_ASYNC',
-                    prop: prop,
-                    func: func
-                })
+            setStateProp: (action: DispatchActionSync<State>) => dispatch({
+                type: 'SET_PROP',
+                prop: action.prop,
+                payload: action.payload
+            }),
+            setStatePropAsync: (action: DispatchActionAsync<State>) => dispatch({
+                type: 'SET_PROP_ASYNC',
+                prop: action.prop,
+                func: action.func
+            })
         }
     }
 

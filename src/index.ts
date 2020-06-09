@@ -47,7 +47,7 @@ type DispatchActionAsync<StateType> = { [K in keyof StateType]: {
  *
  * @template StateType The type of state held by the store.
  */
-function makeAsyncSetPropMiddleware<StateType>(): Middleware<Record<string, unknown>, StateType, redux.Dispatch> {
+function makeAsyncSetPropMiddleware<StateType, DispatchExt, StateExt>(): Middleware<DispatchExt, StateExt, redux.Dispatch> {
     type ActionType = SetActionType<StateType>;
     return (
         ({ dispatch }: { dispatch: redux.Dispatch<ActionType> }) => (next: redux.Dispatch<ActionType>) => (action: ActionType) => {
@@ -112,11 +112,12 @@ type StoreAction<StateType, CustomActions> = SetActionType<StateType> | CustomAc
  */
 export function createStore<StateType,
     CustomActions extends Action = Action<never>,
-    Ext = Record<string, unknown>, StateExt = Record<string, unknown>>(
+    Ext extends { dispatch: redux.Dispatch<CustomActions> } = { dispatch: redux.Dispatch<CustomActions> },
+    StateExt = Record<string, any>>(
         customReducer?: (state: StateType, action: CustomActions) => StateType,
         defaultStore?: StateType,
         shouldComposeWithDevTools?: boolean,
-        middlewares?: (Middleware<Record<string, unknown>, StateType>)[],
+        middlewares?: (Middleware<Record<string, any>, StateExt>)[],
 ): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext {
 
     // ACTIONS 
@@ -157,9 +158,9 @@ export function createStore<StateType,
 
     // STORE
 
-    let appliedMiddlewares;
-    if (middlewares) appliedMiddlewares = applyMiddleware(...middlewares, makeAsyncSetPropMiddleware<StateType>());
-    else appliedMiddlewares = applyMiddleware(makeAsyncSetPropMiddleware<StateType>());
+    let appliedMiddlewares: redux.StoreEnhancer<any>;
+    if (middlewares) appliedMiddlewares = applyMiddleware<redux.Dispatch<CustomActions>, StateExt>(...middlewares, makeAsyncSetPropMiddleware<StateType, redux.Dispatch<CustomActions>, StateExt>());
+    else appliedMiddlewares = applyMiddleware(makeAsyncSetPropMiddleware<StateType, redux.Dispatch<CustomActions>, StateExt>());
 
     return redux.createStore<StateType, CustomStoreAction, Ext, StateExt>(rootReducer,
         shouldComposeWithDevTools !== false ? composeWithDevTools<Ext, StateExt>(appliedMiddlewares) : appliedMiddlewares);
@@ -183,12 +184,12 @@ export function connect<State, TStateProps = Record<string, any>,
         mapStateToProps?: reactRedux.MapStateToProps<TStateProps, TOwnProps, State>,
         mapDispatchToProps?: reactRedux.MapDispatchToProps<TDispatchProps, TOwnProps>
     ): reactRedux.InferableComponentEnhancerWithProps<TStateProps & TDispatchProps, TOwnProps> {
-    const rootMapDispatchToProps = (dispatch, ownProps) => {
+    const rootMapDispatchToProps = (dispatch: redux.Dispatch<Action>, ownProps: TOwnProps) => {
         let mdtp = {};
         if (typeof mapDispatchToProps === 'function') {
             mdtp = Object.assign({}, {
                 ...(mapDispatchToProps as reactRedux.MapDispatchToPropsFunction<TDispatchProps, TOwnProps>)(
-                    dispatch as redux.Dispatch<Action>, ownProps)
+                    dispatch, ownProps)
             });
         }
         else if (mapDispatchToProps && mapDispatchToProps instanceof Object) {

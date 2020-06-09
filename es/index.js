@@ -1,8 +1,6 @@
-(function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('redux'), require('react-redux'), require('redux-devtools-extension')) :
-typeof define === 'function' && define.amd ? define(['exports', 'redux', 'react-redux', 'redux-devtools-extension'], factory) :
-(global = global || self, factory(global['react-redux-ts'] = {}, global.redux, global.reactRedux, global.reduxDevtoolsExtension));
-}(this, (function (exports, redux, reactRedux, reduxDevtoolsExtension) { 'use strict';
+import { applyMiddleware, createStore as createStore$1 } from 'redux';
+import { connect as connect$1 } from 'react-redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 /**
  * Redux's middleware that takes actions with provided functions.
@@ -97,8 +95,8 @@ function createStore(customReducer, defaultStore, shouldComposeWithDevTools, mid
 
 
   let appliedMiddlewares;
-  if (middlewares) appliedMiddlewares = redux.applyMiddleware(...middlewares, makeAsyncSetPropMiddleware());else appliedMiddlewares = redux.applyMiddleware(makeAsyncSetPropMiddleware());
-  return redux.createStore(rootReducer, shouldComposeWithDevTools !== false ? reduxDevtoolsExtension.composeWithDevTools(appliedMiddlewares) : appliedMiddlewares);
+  if (middlewares) appliedMiddlewares = applyMiddleware(...middlewares, makeAsyncSetPropMiddleware());else appliedMiddlewares = applyMiddleware(makeAsyncSetPropMiddleware());
+  return createStore$1(rootReducer, shouldComposeWithDevTools !== false ? composeWithDevTools(appliedMiddlewares) : appliedMiddlewares);
 } // REACT-REDUX CONNECT
 
 /**
@@ -138,12 +136,7 @@ function connect(mapStateToProps, mapDispatchToProps) {
     };
   };
 
-  return reactRedux.connect(mapStateToProps, rootMapDispatchToProps);
+  return connect$1(mapStateToProps, rootMapDispatchToProps);
 }
 
-exports.connect = connect;
-exports.createStore = createStore;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
+export { connect, createStore };

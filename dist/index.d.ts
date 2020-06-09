@@ -50,7 +50,11 @@ declare type StoreAction<StateType, CustomActions> = SetActionType<StateType> | 
  * @param shouldComposeWithDevTools Whether or not apply Redux DevTools. Will apply by default if not set "false"
  * @param middlewares array of applied redux middlewares
  */
-export declare function createStore<StateType, CustomActions extends Action = Action<never>, Ext = Record<string, unknown>, StateExt = Record<string, unknown>>(customReducer?: (state: StateType, action: CustomActions) => StateType, defaultStore?: StateType, shouldComposeWithDevTools?: boolean, middlewares?: (Middleware<Record<string, unknown>, StateType>)[]): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext;
+export declare function createStore<StateType, CustomActions extends Action = Action<never>, Ext extends {
+    dispatch: redux.Dispatch<CustomActions>;
+} = {
+    dispatch: redux.Dispatch<CustomActions>;
+}, StateExt = Record<string, any>>(customReducer?: (state: StateType, action: CustomActions) => StateType, defaultStore?: StateType, shouldComposeWithDevTools?: boolean, middlewares?: (Middleware<Record<string, any>, StateExt>)[]): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext;
 /**
  * Returns a function used for connection react component to the store
  *

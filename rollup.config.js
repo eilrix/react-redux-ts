@@ -6,18 +6,19 @@ import commonjs from "@rollup/plugin-commonjs";
 
 const noDeclarationFiles = { compilerOptions: { declaration: false } };
 
-const devPlugins = [
+const devPlugins = (hasTypes) => [
   autoExternal(),
   resolve(),
   commonjs(),
-  typescript({ tsconfigOverride: noDeclarationFiles })
+  typescript(hasTypes ? { useTsconfigDeclarationDir: true } :
+    { tsconfigOverride: noDeclarationFiles })
 ];
 
 const prodPlugins = [
   autoExternal(),
   resolve(),
   commonjs(),
-  typescript({ useTsconfigDeclarationDir: true }),
+  typescript({ tsconfigOverride: noDeclarationFiles }),
   terser({
     compress: {
       pure_getters: true,
@@ -33,14 +34,14 @@ export default [
   {
     input: 'src/index.ts',
     output: { file: 'lib/index.js', format: 'cjs', indent: false },
-    plugins: devPlugins,
+    plugins: devPlugins(true),
   },
 
   // ES
   {
     input: 'src/index.ts',
     output: { file: 'es/index.js', format: 'es', indent: false },
-    plugins: devPlugins,
+    plugins: devPlugins(false),
   },
 
   // ES for Browsers
@@ -59,7 +60,7 @@ export default [
       name: 'react-redux-ts',
       indent: false,
     },
-    plugins: devPlugins,
+    plugins: devPlugins(false),
   },
 
   // UMD Production

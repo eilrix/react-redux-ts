@@ -1,97 +1,53 @@
-import nodeResolve from '@rollup/plugin-node-resolve'
-import babel from 'rollup-plugin-babel'
-import replace from '@rollup/plugin-replace'
 import typescript from 'rollup-plugin-typescript2'
 import { terser } from 'rollup-plugin-terser'
+import autoExternal from "rollup-plugin-auto-external";
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
 
-import pkg from './package.json'
+const noDeclarationFiles = { compilerOptions: { declaration: false } };
 
-const extensions = ['.ts']
-const noDeclarationFiles = { compilerOptions: { declaration: false } }
+const devPlugins = [
+  autoExternal(),
+  resolve(),
+  commonjs(),
+  typescript({ tsconfigOverride: noDeclarationFiles })
+];
 
-const babelRuntimeVersion = pkg.dependencies['@babel/runtime'].replace(
-  /^[^0-9]*/,
-  ''
-)
-
-const makeExternalPredicate = (externalArr) => {
-  if (externalArr.length === 0) {
-    return () => false
-  }
-  const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`)
-  return (id) => pattern.test(id)
-}
+const prodPlugins = [
+  autoExternal(),
+  resolve(),
+  commonjs(),
+  typescript({ useTsconfigDeclarationDir: true }),
+  terser({
+    compress: {
+      pure_getters: true,
+      unsafe: true,
+      unsafe_comps: true,
+      warnings: false,
+    },
+  }),
+];
 
 export default [
   // CommonJS
   {
     input: 'src/index.ts',
     output: { file: 'lib/index.js', format: 'cjs', indent: false },
-    external: ['redux', 'react-redux', 'redux-devtools-extension', '@babel/runtime'],
-    plugins: [
-      nodeResolve({
-        extensions,
-      }),
-      typescript({ useTsconfigDeclarationDir: true }),
-      babel({
-        extensions,
-        plugins: [
-          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
-        ],
-        runtimeHelpers: true,
-      }),
-    ],
+    plugins: devPlugins,
   },
 
   // ES
   {
     input: 'src/index.ts',
     output: { file: 'es/index.js', format: 'es', indent: false },
-    external: ['redux', 'react-redux', 'redux-devtools-extension', '@babel/runtime'],
-    plugins: [
-      nodeResolve({
-        extensions,
-      }),
-      typescript({ tsconfigOverride: noDeclarationFiles }),
-      babel({
-        extensions,
-        plugins: [
-          [
-            '@babel/plugin-transform-runtime',
-            { version: babelRuntimeVersion, useESModules: true },
-          ],
-        ],
-        runtimeHelpers: true,
-      }),
-    ],
+    plugins: devPlugins,
   },
 
   // ES for Browsers
   {
     input: 'src/index.ts',
     output: { file: 'es/index.mjs', format: 'es', indent: false },
-    external: ['redux', 'react-redux', 'redux-devtools-extension', '@babel/runtime'],
-    plugins: [
-      nodeResolve({
-        extensions,
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
-      }),
-      typescript({ tsconfigOverride: noDeclarationFiles }),
-      babel({
-        extensions,
-        exclude: 'node_modules/**',
-      }),
-      terser({
-        compress: {
-          pure_getters: true,
-          unsafe: true,
-          unsafe_comps: true,
-          warnings: false,
-        },
-      }),
-    ],
+    plugins: prodPlugins,
   },
 
   // UMD Development
@@ -103,20 +59,7 @@ export default [
       name: 'react-redux-ts',
       indent: false,
     },
-    external: ['redux', 'react-redux', 'redux-devtools-extension', '@babel/runtime'],
-    plugins: [
-      nodeResolve({
-        extensions,
-      }),
-      typescript({ tsconfigOverride: noDeclarationFiles }),
-      babel({
-        extensions,
-        exclude: 'node_modules/**',
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('development'),
-      }),
-    ],
+    plugins: devPlugins,
   },
 
   // UMD Production
@@ -128,27 +71,6 @@ export default [
       name: 'react-redux-ts',
       indent: false,
     },
-    external: ['redux', 'react-redux', 'redux-devtools-extension', '@babel/runtime'],
-    plugins: [
-      nodeResolve({
-        extensions,
-      }),
-      typescript({ tsconfigOverride: noDeclarationFiles }),
-      babel({
-        extensions,
-        exclude: 'node_modules/**',
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
-      }),
-      terser({
-        compress: {
-          pure_getters: true,
-          unsafe: true,
-          unsafe_comps: true,
-          warnings: false,
-        },
-      }),
-    ],
-  },
+    plugins: prodPlugins,
+  }
 ]

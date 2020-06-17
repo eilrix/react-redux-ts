@@ -1,7 +1,9 @@
 # react-redux-ts
-Simplifies workflow with redux and react-redux
+Thin typescript wrapper around redux and react-redux that simplifies workflow
 
+```sh
 npm i react-redux-ts -S
+```
 
 ## 1. Simple set
 Adds a common action to set any value in the store with typechecks.

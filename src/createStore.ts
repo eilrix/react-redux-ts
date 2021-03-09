@@ -1,12 +1,12 @@
 import * as redux from "redux";
 import { Action, applyMiddleware, Middleware } from "redux";
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { SetActionType, SetActionSync } from './types';
+import { SetActionType, SetActionSync, StoreAction, DispatchHelpers } from './types';
 import { makeAsyncSetPropMiddleware } from './asyncSetPropMiddleware';
+import { getSetStatePropAsync, getSetStateProp } from './setStateProp';
 
 // CREATE STORE //
 
-type StoreAction<StateType, CustomActions> = SetActionType<StateType> | CustomActions;
 
 /**
  * Creates a Redux store.
@@ -28,7 +28,7 @@ export function createStore<StateType,
         defaultStore?: StateType,
         shouldComposeWithDevTools?: boolean,
         middlewares?: (Middleware<Record<string, any>, StateExt>)[],
-): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext {
+): redux.Store<StateType & StateExt, StoreAction<StateType, CustomActions>> & Ext & DispatchHelpers<StateType> {
 
     // ACTIONS 
 
@@ -69,9 +69,17 @@ export function createStore<StateType,
     // STORE
 
     let appliedMiddlewares: redux.StoreEnhancer<any>;
-    if (middlewares) appliedMiddlewares = applyMiddleware<redux.Dispatch<CustomActions>, StateExt>(...middlewares, makeAsyncSetPropMiddleware<StateType, redux.Dispatch<CustomActions>, StateExt>());
+    if (middlewares) appliedMiddlewares = applyMiddleware<redux.Dispatch<CustomActions>,
+        StateExt>(...middlewares, makeAsyncSetPropMiddleware<StateType, redux.Dispatch<CustomActions>, StateExt>());
     else appliedMiddlewares = applyMiddleware(makeAsyncSetPropMiddleware<StateType, redux.Dispatch<CustomActions>, StateExt>());
 
-    return redux.createStore<StateType, CustomStoreAction, Ext, StateExt>(rootReducer,
+    const reduxStore = redux.createStore<StateType, CustomStoreAction, Ext, StateExt>(rootReducer,
         shouldComposeWithDevTools !== false ? composeWithDevTools<Ext, StateExt>(appliedMiddlewares) : appliedMiddlewares);
+
+    const store = {
+        ...reduxStore,
+        setStateProp: getSetStateProp<StateType>(reduxStore.dispatch),
+        setStatePropAsync: getSetStatePropAsync<StateType>(reduxStore.dispatch),
+    };
+    return store;
 }

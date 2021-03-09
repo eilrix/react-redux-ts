@@ -2,8 +2,9 @@ import * as redux from "redux";
 import { Action } from "redux";
 import * as reactRedux from 'react-redux';
 import { DispatchActionSync, DispatchActionAsync } from './types';
-
+import { getSetStatePropAsync, getSetStateProp } from './setStateProp';
 // REACT-REDUX CONNECT
+
 
 /**
  * Returns a function used for connection react component to the store
@@ -34,16 +35,8 @@ export function connect<State, TStateProps = Record<string, any>,
 
         return {
             ...mdtp,
-            setStateProp: (action: DispatchActionSync<State>) => dispatch({
-                type: 'SET_PROP',
-                prop: action.prop,
-                payload: action.payload
-            }),
-            setStatePropAsync: (action: DispatchActionAsync<State>) => dispatch({
-                type: 'SET_PROP_ASYNC',
-                prop: action.prop,
-                func: action.func
-            })
+            setStateProp: getSetStateProp(dispatch),
+            setStatePropAsync: getSetStatePropAsync(dispatch),
         }
     }
 

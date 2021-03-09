@@ -35,6 +35,13 @@ export type DispatchActionAsync<StateType> = { [K in keyof StateType]: {
 
 
 
+export type StoreAction<StateType, CustomActions> = SetActionType<StateType> | CustomActions;
+
+export type DispatchHelpers<State> = {
+    setStateProp: (action: DispatchActionSync<State>) => typeof action;
+    setStatePropAsync: (action: DispatchActionAsync<State>) => typeof action;
+}
+
 export type PropsType<State = Record<string, unknown>, TOwnProps = Record<string, unknown>,
     TStateProps = Record<string, unknown>, TDispatchProps = Record<string, unknown>> =
     TStateProps & TDispatchProps & TOwnProps & {

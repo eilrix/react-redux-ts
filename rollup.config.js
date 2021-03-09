@@ -1,24 +1,29 @@
 import typescript from 'rollup-plugin-typescript2'
 import { terser } from 'rollup-plugin-terser'
 import autoExternal from "rollup-plugin-auto-external";
-import resolve from "@rollup/plugin-node-resolve";
+import nodeResolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-
-const noDeclarationFiles = { compilerOptions: { declaration: false } };
+import { resolve } from 'path';
 
 const devPlugins = (hasTypes) => [
   autoExternal(),
-  resolve(),
+  nodeResolve(),
   commonjs(),
-  typescript(hasTypes ? { useTsconfigDeclarationDir: true } :
-    { tsconfigOverride: noDeclarationFiles })
+  typescript(hasTypes ? {
+    tsconfigOverride: {
+      compilerOptions: {
+        declaration: true,
+        declarationDir: resolve(process.cwd(), 'dist'),
+      }
+    }
+  } : {}),
 ];
 
-const prodPlugins = [
+const prodPlugins = () => [
   autoExternal(),
-  resolve(),
+  nodeResolve(),
   commonjs(),
-  typescript({ tsconfigOverride: noDeclarationFiles }),
+  typescript(),
   terser({
     compress: {
       pure_getters: true,
@@ -48,7 +53,7 @@ export default [
   {
     input: 'src/index.ts',
     output: { file: 'es/index.mjs', format: 'es', indent: false },
-    plugins: prodPlugins,
+    plugins: prodPlugins(),
   },
 
   // UMD Development
@@ -72,6 +77,6 @@ export default [
       name: 'react-redux-ts',
       indent: false,
     },
-    plugins: prodPlugins,
+    plugins: prodPlugins(),
   }
 ]

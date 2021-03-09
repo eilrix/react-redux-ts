@@ -10,17 +10,23 @@
       "esnext",
       "es2018.promise"
     ],
-    "declaration": true,
-    "declarationDir": "./dist",
     "outDir": "./dist",
-    "jsx": "react",
     "removeComments": false,
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src/**/*"
-  ]
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "es",
+    "lib"
+  ],
 }

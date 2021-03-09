@@ -1,8 +1,8 @@
 # react-redux-ts
-Thin typescript wrapper around redux and react-redux that simplifies workflow
+Typescript wrapper around redux and react-redux that simplifies workflow
 
 ```sh
-npm i react-redux-ts -S
+npm i react-redux-ts
 ```
 
 ## 1. Simple set
@@ -46,7 +46,7 @@ props.setStatePropAsync({
 Allows to use type definitions as actions instead of objects.
 
 
-##### Actions.ts:
+##### actions.ts:
 
 ```typescript
 type NextPageAction = {
@@ -62,12 +62,12 @@ export type CustomActionTypes<State> = NextPageAction | ValidateFieldAction<Stat
 ```
 
 
-##### CustomReducer.ts:
+##### customReducer.ts:
 ```typescript
 import { CustomActionTypes } from '../actions/Actions';
 import { StateType } from '../Store';
 
-export function CustomReducer(state: StateType, action: CustomActionTypes<StateType>): StateType {
+export function customReducer(state: StateType, action: CustomActionTypes<StateType>): StateType {
   switch (action.type) {
     case 'ValidateField':
       console.log('ValidateField');
@@ -80,29 +80,49 @@ export function CustomReducer(state: StateType, action: CustomActionTypes<StateT
 };
 ```
 
-##### Store.ts:
+##### store.ts:
 ```typescript
 import { createStore } from 'react-redux-ts';
-import { CustomActionTypes } from './actions/Actions';
-import { CustomReducer } from './reducers/CustomReducer';
+import { CustomActionTypes } from './actions';
+import { customReducer } from './customReducer';
+
 class State { 
     myProp: string = '';
 }
-export type StateType = typeof State;
 
 // All arguments of createStore are optional. It accepts your root reducer, initial state, 
-// boolean for whether or not use devtools, array of your middlewares.
-const store = createStore<StateType, CustomActionTypes<StateType>>(
-    CustomReducer, new State());
+// boolean for whether or not use devtools, array of middlewares.
+export const store = createStore<State, CustomActionTypes<State>>(
+    customReducer, new State());
 
 export type DispatchType = typeof store.dispatch;
 export type StoreAction = ReturnType<typeof store.dispatch>;
+export type StateType = typeof State;
 ```
+
+
+##### index.tsx:
+```typescript
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux-ts'
+import store from './store'
+import App from './App'
+
+const rootElement = document.getElementById('root')
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  rootElement
+)
+```
+
 
 ##### MyComponent.tsx:
 ```typescript
 import { connect, PropsType } from 'react-redux-ts';
-import { StateType, DispatchType } from './Store.ts';
+import { StateType, DispatchType } from './store.ts';
 const mapStateToProps = (state: StateType, ownProps) => {
     return {
         myProp: state.myProp
@@ -129,6 +149,7 @@ const MyComponent = (props: MyComponentPropsType) => {
     )
 }
 
-export const ConnectedMyComponent = connect(mapStateToProps, mapDispatchToProps)(MyComponent);
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(MyComponent);
+export default connectedComponent;
 ```
 

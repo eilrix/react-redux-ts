@@ -5,6 +5,7 @@ Typescript wrapper around redux and react-redux that simplifies workflow
 npm i react-redux-ts
 ```
 
+
 ## 1. Simple set
 Adds a common action to set any value in the store with typechecks.
 Without async:
@@ -42,6 +43,7 @@ props.setStatePropAsync({
 });
 ```
 
+
 ## 2. Simple and safe type actions
 Allows to use type definitions as actions instead of objects.
 
@@ -64,21 +66,20 @@ export type CustomActionTypes<State> = NextPageAction | ValidateFieldAction<Stat
 
 ##### customReducer.ts:
 ```typescript
-import { CustomActionTypes } from '../actions/Actions';
-import { StateType } from '../Store';
+import { CustomActionTypes } from '../actions';
+import { StateType } from '../store';
 
 export function customReducer(state: StateType, action: CustomActionTypes<StateType>): StateType {
   switch (action.type) {
-    case 'ValidateField':
-      console.log('ValidateField');
-      return state;
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter;
       break;
     default:
-        console.log('default');
       	return state;
   }
 };
 ```
+
 
 ##### store.ts:
 ```typescript
@@ -101,25 +102,7 @@ export type StateType = typeof State;
 ```
 
 
-##### index.tsx:
-```typescript
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux-ts'
-import store from './store'
-import App from './App'
-
-const rootElement = document.getElementById('root')
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  rootElement
-)
-```
-
-
-##### MyComponent.tsx:
+##### AppComponent.tsx:
 ```typescript
 import { connect, PropsType } from 'react-redux-ts';
 import { StateType, DispatchType } from './store.ts';
@@ -133,9 +116,9 @@ const mapDispatchToProps = (dispatch: DispatchType, ownProps) => {
         handleNext: () => dispatch({ type: 'NextPage' })
     }
 }
-type MyComponentPropsType = PropsType<StateType, {}, ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
+type AppComponentPropsType = PropsType<StateType, {}, ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
 
-const MyComponent = (props: MyComponentPropsType) => {
+const AppComponent = (props: AppComponentPropsType) => {
     return (
         <div
             onClick={() => {
@@ -149,7 +132,24 @@ const MyComponent = (props: MyComponentPropsType) => {
     )
 }
 
-const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(MyComponent);
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(AppComponent);
 export default connectedComponent;
 ```
 
+
+##### index.tsx:
+```typescript
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux-ts'
+import store from './store'
+import AppComponent from './AppComponent'
+
+const rootElement = document.getElementById('root')
+ReactDOM.render(
+  <Provider store={store}>
+    <AppComponent />
+  </Provider>,
+  rootElement
+)
+```

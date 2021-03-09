@@ -51,32 +51,40 @@ Allows to use type definitions as actions instead of objects.
 ##### actions.ts:
 
 ```typescript
-type NextPageAction = {
-  type: 'NextPage';
+import { StateType } from '../store';
+type ClearTodosAction = {
+    type: 'CLEAR_TODOS';
 };
 
-type ValidateFieldAction<State> = {
-  type: 'ValidateField';
-  payload: (keyof State)[];
+type SetVisibilityFilter = {
+    type: 'SET_VISIBILITY_FILTER';
+    filter: StateType['filter'];
 };
 
-export type CustomActionTypes<State> = NextPageAction | ValidateFieldAction<State>;
+export type ActionTypes = ClearTodosAction | SetVisibilityFilter;
 ```
 
 
 ##### customReducer.ts:
 ```typescript
-import { CustomActionTypes } from '../actions';
+import { ActionTypes } from '../actions';
 import { StateType } from '../store';
 
-export function customReducer(state: StateType, action: CustomActionTypes<StateType>): StateType {
-  switch (action.type) {
-    case 'SET_VISIBILITY_FILTER':
-      return action.filter;
-      break;
-    default:
-      	return state;
-  }
+export function customReducer(state: StateType, action: ActionTypes): StateType {
+    switch (action.type) {
+        case 'SET_VISIBILITY_FILTER':
+            return {
+                ...state,
+                filter: action.filter
+            }
+        case 'CLEAR_TODOS':
+            return {
+                ...state,
+                todos: []
+            }
+        default:
+            return state;
+    }
 };
 ```
 
@@ -84,16 +92,18 @@ export function customReducer(state: StateType, action: CustomActionTypes<StateT
 ##### store.ts:
 ```typescript
 import { createStore } from 'react-redux-ts';
-import { CustomActionTypes } from './actions';
+import { ActionTypes } from './actions';
 import { customReducer } from './customReducer';
 
-class State { 
+class State {
+    todos: string[] = [];
+    filter: 'SHOW_ALL' | 'HIDE_ALL' = 'SHOW_ALL';
     myProp: string = '';
 }
 
 // All arguments of createStore are optional. It accepts your root reducer, initial state, 
 // boolean for whether or not use devtools, array of middlewares.
-export const store = createStore<State, CustomActionTypes<State>>(
+export const store = createStore<State, ActionTypes<State>>(
     customReducer, new State());
 
 export type DispatchType = typeof store.dispatch;
@@ -145,11 +155,11 @@ import { Provider } from 'react-redux-ts'
 import store from './store'
 import AppComponent from './AppComponent'
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root');
 ReactDOM.render(
-  <Provider store={store}>
-    <AppComponent />
-  </Provider>,
-  rootElement
-)
+    <Provider store={store}>
+        <AppComponent />
+    </Provider>,
+    rootElement
+);
 ```

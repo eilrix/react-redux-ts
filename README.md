@@ -7,19 +7,17 @@ npm i react-redux-ts
 
 
 ## 1. Simple set
-Adds a common action to set any value in the store with typechecks.
+Adds a common action to set any value in the store via dispatch with typechecks.
 Without async:
 ```typescript
-store.dispatch({
-    type: 'SET_PROP',
+store.setStateProp({
     prop: 'myProp',
     payload: 'val'
 });
 ```
 And async (similar to Redux-thunk):
 ```typescript
-store.dispatch({
-    type: 'SET_PROP_ASYNC',
+store.setStatePropAsync({
     prop: 'myProp',
     func: myAsyncFunction
 });
@@ -33,18 +31,12 @@ Async version will also dispatch notifications in order:
 
 Will also add both methods as props to connected react component
 ```typescript
-props.setStateProp({
-    prop: 'myProp',
-    payload: 'val'
-});
-props.setStatePropAsync({
-    prop: 'myProp',
-    func: myAsyncFunction
-});
+props.setStateProp(/* { ... } */);
+props.setStatePropAsync(/* { ... } */);
 ```
 
 
-## 2. Simple and safe type actions
+## 2. Type actions
 Allows to use type definitions as actions instead of objects.
 
 

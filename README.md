@@ -116,17 +116,21 @@ export type StateType = typeof State;
 ```typescript
 import { connect, PropsType } from 'react-redux-ts';
 import { StateType, DispatchType } from './store.ts';
-const mapStateToProps = (state: StateType, ownProps) => {
+
+type OwnPropsType = {};
+
+const mapStateToProps = (state: StateType, ownProps: OwnPropsType) => {
     return {
         myProp: state.myProp
     }
 }
-const mapDispatchToProps = (dispatch: DispatchType, ownProps) => {
+const mapDispatchToProps = (dispatch: DispatchType, ownProps: OwnPropsType) => {
     return {
-        handleNext: () => dispatch({ type: 'NextPage' })
+        clearTodos: () => dispatch({ type: 'CLEAR_TODOS' })
     }
 }
-type AppComponentPropsType = PropsType<StateType, {}, ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
+type AppComponentPropsType = PropsType<StateType, OwnPropsType, 
+    ReturnType<typeof mapStateToProps>, ReturnType<typeof mapDispatchToProps>>;
 
 const AppComponent = (props: AppComponentPropsType) => {
     return (
@@ -136,7 +140,7 @@ const AppComponent = (props: AppComponentPropsType) => {
                     prop: 'myProp',
                     payload: 'val'
                 });
-                props.handleNext();
+                props.clearTodos();
             }}
         >{props.myProp}</div>
     )

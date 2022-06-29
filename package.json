@@ -26,7 +26,7 @@
     "build": "rollup -c"
   },
   "dependencies": {
-    "react-redux": "^7.2.2",
+    "react-redux": "^8.0.2",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.9",
     "tslib": "^2.1.0"
